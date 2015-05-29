@@ -5,16 +5,17 @@ HEADERS += ./common/direction.h \
     ./client/clientgame.h \
     ./client/clientnetwork.h \
     ./client/clientsocketadapter.h \
-    ./connectionwidget.h \
-    ./settingswidget.h \
+    ./common/game.h \
+    ./widgets/connectionwidget.h \
+    ./widgets/settingswidget.h \
     ./server/serversocketadapter.h \
     ./server/servernetwork.h \
     ./server/servergame.h \
     ./common/socketadapter.h \
     ./common/parser.h \
     ./common/isocketadapter.h
-SOURCES += ./connectionwidget.cpp \
-    ./settingswidget.cpp \
+SOURCES += ./widgets/connectionwidget.cpp \
+    ./widgets/settingswidget.cpp \
     ./client/board.cpp \
     ./client/clientgame.cpp \
     ./client/clientnetwork.cpp \
@@ -28,4 +29,3 @@ SOURCES += ./connectionwidget.cpp \
     ./server/servergame.cpp \
     ./server/servernetwork.cpp
 RESOURCES += snakegame.qrc
-

@@ -8,7 +8,6 @@
 
 
 ServerGame::ServerGame(quint16 t_port)
-    : m_parser(new Parser)
 {
     try {
         m_serverNetwork = new ServerNetwork(t_port);
@@ -16,10 +15,10 @@ ServerGame::ServerGame(quint16 t_port)
         throw error;
     }
 
-    connect(m_serverNetwork, &ServerNetwork::received, m_parser, &Parser::process);
+    connect(m_serverNetwork, &ServerNetwork::received, &m_parser, &Parser::process);
     connect(m_serverNetwork, &ServerNetwork::newClient, this, &ServerGame::newClient);
 
-    connect(m_parser, &Parser::directionChanged, this, &ServerGame::setDirection);
+    connect(&m_parser, &Parser::directionChanged, this, &ServerGame::setDirection);
     connect(this, &ServerGame::snakesChanged, &ServerGame::setSnakes);
     connect(this, &ServerGame::timerSignalChanged, &ServerGame::setTimerSignal);
     connect(this, &ServerGame::scoresChanged, std::bind(&ServerGame::updateScore, this, 0, 0));
@@ -32,8 +31,8 @@ void ServerGame::newClient(int t_id)
 {
     qDebug() << "ServerGame::newClient";
     ++m_connectedClients;
-    m_serverNetwork->sendOne(t_id, m_parser->idToString(t_id));
-    m_serverNetwork->sendAll(m_parser->snakesToString(m_snakes));
+    m_serverNetwork->sendOne(t_id, m_parser.idToString(t_id));
+    m_serverNetwork->sendAll(m_parser.snakesToString(m_snakes));
 
     if (t_id == CLIENTS - 1) {
         m_allClientsConnected = true;
@@ -70,6 +69,7 @@ void ServerGame::start()
     if (m_allClientsConnected) {
         qDebug() << "ServerGame::start";
         init();
+        m_timer.stop();
         m_timer.start(m_gameSpeed, this);
     } else {
         emit allClientsNotConnected();
@@ -80,8 +80,8 @@ void ServerGame::start()
 
 void ServerGame::restart()
 {
+    qDebug() << "ServerGame::restart";
     m_serverNetwork->sendAll("R");
-    m_timer.stop();
     start();
 }
 
@@ -175,7 +175,7 @@ void ServerGame::setDirection(const std::pair<int, Direction> &t_direction)
 void ServerGame::setSnakes(const std::map<int, Snake> &t_snakes)
 {
     m_snakes = t_snakes;
-    const auto &snakesStr = m_parser->snakesToString(m_snakes);
+    const auto &snakesStr = m_parser.snakesToString(m_snakes);
     m_serverNetwork->sendAll(snakesStr);
 }
 
@@ -188,7 +188,7 @@ void ServerGame::setTimerSignal()
 
 void ServerGame::changedDimensions(const QPair<int, int> &t_dimensions)
 {
-    m_serverNetwork->sendAll(m_parser->dimensionsToString(t_dimensions));
+    m_serverNetwork->sendAll(m_parser.dimensionsToString(t_dimensions));
 }
 
 
@@ -231,7 +231,7 @@ bool ServerGame::checkWallCrash(const Snake &t_snake)
 void ServerGame::gameOver(int t_id)
 {
     m_timer.stop();
-    m_serverNetwork->sendAll(m_parser->gameOverToString(t_id));
+    m_serverNetwork->sendAll(m_parser.gameOverToString(t_id));
 }
 
 
@@ -269,7 +269,7 @@ bool ServerGame::isGameHasPoint(const QPoint &t_point) const
 void ServerGame::setFood(const QList<QPoint> &t_food)
 {
     m_food = t_food;
-    m_serverNetwork->sendAll(m_parser->foodToString(t_food));
+    m_serverNetwork->sendAll(m_parser.foodToString(t_food));
 }
 
 
@@ -292,11 +292,14 @@ void ServerGame::eatTail()
 {
     for (auto &left : m_snakes) {
         for (auto &right : m_snakes) {
-            if (left.second != right.second && left.second.head() == right.second.tail()) {
+            if (left.second != right.second 
+                && left.second.head() == right.second.tail()) {
+
                 left.second.addToTail(left.second.tail());
                 updateScore(left.first, 1);
                 right.second.removeFromTail();
                 updateScore(right.first, -1);
+
             }
         }
     }
@@ -306,7 +309,7 @@ void ServerGame::eatTail()
 void ServerGame::updateScore(int t_id, int t_score)
 {
     m_scores[t_id] += t_score;
-    m_serverNetwork->sendAll(m_parser->scoresToString(m_scores));
+    m_serverNetwork->sendAll(m_parser.scoresToString(m_scores));
     checkMaxScoreReached();
 }
 

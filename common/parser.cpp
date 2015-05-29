@@ -127,7 +127,6 @@ QString Parser::foodToString(const QList<QPoint> &t_food) const
     for (auto const &point : t_food)
         stream << point.x() << " " << point.y() << " ";
 
-    qDebug() << "Parser::foodToString(end)";
     return res;
 }
 
@@ -138,7 +137,6 @@ QList<QPoint> Parser::foodFromString(const QString &t_message) const
     QList<QPoint> res;
     QStringList foodStr = t_message.split(' ');
     foodStr.removeLast();
-    qDebug() << "Parser::foodFromString" << foodStr;
     for (auto i = 0; i < foodStr.size(); i += 2)
         res.push_back({ foodStr[i].toInt(), foodStr[i + 1].toInt() });
 
@@ -177,7 +175,6 @@ QString Parser::scoresToString(const std::map<int, int> &t_scores) const
     QTextStream stream(&res);
     for (auto const &score : t_scores)
         stream << "C" << score.first << " " << score.second << " ";
-    qDebug() << "scoresToString" << res;
     return std::move(res);
 }
 

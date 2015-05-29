@@ -7,11 +7,11 @@
 #include <QList>
 
 #include "../common/snake.h"
+#include "../common/game.h"
 
-class Parser;
 class ServerNetwork;
 
-class ServerGame : public QObject
+class ServerGame : public Game
 {
     Q_OBJECT
 
@@ -20,7 +20,7 @@ public:
     ServerGame(quint16 t_port);
     quint16 port() const;
 
-    const quint16 CLIENTS = 2;
+    const quint16 CLIENTS = 1;
     int width() const { return m_dimensions.first; }
     int height() const { return m_dimensions.second; }
 
@@ -29,8 +29,8 @@ public slots:
     void setSnakes(const std::map<int, Snake> &t_snakes);
     void setFood(const QList<QPoint> &t_food);
     void setTimerSignal();
-    void start();
-    void restart();
+    void start() override;
+    void restart() override;
     void changedDimensions(const QPair<int, int> &t_dimensions);
     void newClient(int t_id);
     void gameOver(int t_id);
@@ -63,7 +63,6 @@ private:
     quint16 m_connectedClients = 0;
     bool m_allClientsConnected = false;
     ServerNetwork *m_serverNetwork;
-    Parser *m_parser;
 
     std::map<int, int> m_scores;
     std::map<int, Snake> m_snakes;

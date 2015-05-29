@@ -5,8 +5,7 @@
 #include "servernetwork.h"
 #include "serversocketadapter.h"
 
-ServerNetwork::ServerNetwork(quint16 t_port, QObject *t_parent)
-    : QTcpServer(t_parent)
+ServerNetwork::ServerNetwork(quint16 t_port)
 {
     connect(this, &ServerNetwork::newConnection, this, &ServerNetwork::onNewConnection);
 
@@ -21,7 +20,7 @@ ServerNetwork::ServerNetwork(quint16 t_port, QObject *t_parent)
 
 void ServerNetwork::onNewConnection()
 {
-    qDebug() << "New connection" << m_id;
+    qDebug() << "ServerNetwork::onNewconnection" << m_id;
 
     auto clientSock = nextPendingConnection();
     auto sockHandle = new ServerSocketAdapter(clientSock);
@@ -38,7 +37,7 @@ void ServerNetwork::onNewConnection()
 
 void ServerNetwork::onDisconnected()
 {
-    QTextStream(stdout) << "client disconnected" << endl;
+    qDebug() << "ServerNetwork::onDisconnected" << endl;
     auto client = static_cast<ServerSocketAdapter*>(sender());
     m_clients.removeOne(client);
     delete client;
@@ -47,14 +46,14 @@ void ServerNetwork::onDisconnected()
 
 void ServerNetwork::sendOne(int t_id, const QString &t_message) const
 {
+    qDebug() << "ServerNetwork::sendOne" << t_message;
     m_clients[t_id]->sendString(t_message);
 }
 
 
 void ServerNetwork::sendAll(const QString &t_message) const
 {
-    qDebug() << "ServerNetwork::sendAll";
+    qDebug() << "ServerNetwork::sendAll" << t_message;
     for (auto *sock : m_clients)
         sock->sendString(t_message);
-    qDebug() << "ServerNetwork::sendAll(end)";
 }

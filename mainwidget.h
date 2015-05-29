@@ -15,6 +15,7 @@ class QLabel;
 class QLineEdit;
 QT_END_NAMESPACE
 
+class Game;
 class Board;
 class ClientGame;
 class ServerGame;
@@ -32,9 +33,8 @@ public slots:
 
 private:
     Board *m_board;
-
-    ClientGame *m_client;
-    ServerGame *m_server;
+    Game *m_client;
+    Game *m_server;
 
     QPushButton *m_playButton;
     QRadioButton *m_serverRadioButton;

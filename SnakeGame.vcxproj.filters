@@ -143,9 +143,6 @@
     <ClCompile Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\widgets\settingswidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\common\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_connectionwidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>

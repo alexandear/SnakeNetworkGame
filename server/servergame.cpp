@@ -20,7 +20,6 @@ ServerGame::ServerGame(quint16 t_port)
 
     connect(&m_parser, &Parser::directionChanged, this, &ServerGame::setDirection);
     connect(this, &ServerGame::snakesChanged, &ServerGame::setSnakes);
-    connect(this, &ServerGame::timerSignalChanged, &ServerGame::setTimerSignal);
     connect(this, &ServerGame::scoresChanged, std::bind(&ServerGame::updateScore, this, 0, 0));
 
     connect(this, &ServerGame::foodAppeared, this, &ServerGame::setFood);
@@ -49,7 +48,7 @@ void ServerGame::init()
     m_food.clear();
     m_scores.clear();
 
-    qDebug() << "ServerGame::init()" << m_connectedClients;
+    qDebug() << "ServerGame::init" << m_connectedClients;
     for (auto i = 0; i < m_connectedClients; ++i) {
         m_snakes[i] = startPosition(i);
         m_directions[i] = Direction::Up;
@@ -115,7 +114,7 @@ void ServerGame::timerEvent(QTimerEvent *t_event)
         eatFood();
         eatTail();
 
-        emit timerSignalChanged();
+        m_timerSignal = true;
         emit snakesChanged(m_snakes);
     }
 }
@@ -168,7 +167,10 @@ int ServerGame::determineWinner(int t_winner)
 
 void ServerGame::setDirection(const std::pair<int, Direction> &t_direction) 
 {
-    m_directions[t_direction.first] = t_direction.second;
+    if (m_timerSignal) {
+        m_directions[t_direction.first] = t_direction.second;
+        m_timerSignal = false;
+    }
 }
 
 
@@ -177,12 +179,6 @@ void ServerGame::setSnakes(const std::map<int, Snake> &t_snakes)
     m_snakes = t_snakes;
     const auto &snakesStr = m_parser.snakesToString(m_snakes);
     m_serverNetwork->sendAll(snakesStr);
-}
-
-
-void ServerGame::setTimerSignal()
-{
-    m_serverNetwork->sendAll("T");
 }
 
 
@@ -256,8 +252,8 @@ QList<QPoint> ServerGame::generateFood()
 
 bool ServerGame::isGameHasPoint(const QPoint &t_point) const
 {
-    for (auto const &client : m_snakes) {
-        for (auto const &point : client.second.points()) {
+    for (auto const &snake : m_snakes) {
+        for (auto const &point : snake.second.points()) {
             if (point == t_point)
                 return true;
         }

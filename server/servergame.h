@@ -20,17 +20,16 @@ public:
     ServerGame(quint16 t_port);
     quint16 port() const;
 
-    const quint16 CLIENTS = 1;
+    const quint16 CLIENTS = 2;
     int width() const { return m_dimensions.first; }
     int height() const { return m_dimensions.second; }
 
 public slots:
+    void start() override;
+    void restart() override;
     void setDirection(const std::pair<int, Direction> &t_direction);
     void setSnakes(const std::map<int, Snake> &t_snakes);
     void setFood(const QList<QPoint> &t_food);
-    void setTimerSignal();
-    void start() override;
-    void restart() override;
     void changedDimensions(const QPair<int, int> &t_dimensions);
     void newClient(int t_id);
     void gameOver(int t_id);
@@ -43,7 +42,6 @@ public slots:
 
 signals:
     void snakesChanged(const std::map<int, Snake> &t_snakes);
-    void timerSignalChanged();
     void allClientsConnected();
     void allClientsNotConnected();
     void gameStarted();
@@ -70,6 +68,7 @@ private:
     QList<QPoint> m_food;
 
     QBasicTimer m_timer;
+    bool m_timerSignal = false;
 
     void init();
     Snake startPosition(int t_id);

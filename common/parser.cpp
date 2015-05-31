@@ -31,8 +31,6 @@ void Parser::process(const QString &t_message) const
         processId(rightStr);
     else if (ch == 'O')
         processDirection(rightStr);
-    else if (ch == 'T')
-        emit timerSignalChanged();
     else if (ch == 'D')
         processDimensions(rightStr);
     else if (ch == 'F')

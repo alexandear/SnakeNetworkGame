@@ -44,7 +44,6 @@ private:
     QPair<int, int> m_dimensions = { 1, 1 };
     QList<QPoint> m_food;
     std::map<int, Snake> m_snakes;
-    bool m_timerSignal = true;
     Direction m_direction = Direction::Up;
     int m_id = -1;
     bool m_gameOver = false;

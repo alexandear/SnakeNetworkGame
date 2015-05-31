@@ -16,7 +16,6 @@ ClientGame::ClientGame(Board *t_board, const QString &t_address, quint16 t_port)
     connect(&m_parser, &Parser::idChanged, this, &ClientGame::setId);
     connect(&m_parser, &Parser::restartSignal, this, &ClientGame::restart);
     connect(&m_parser, &Parser::scoresChanged, this, &ClientGame::scoresChanged);
-    connect(&m_parser, &Parser::timerSignalChanged, m_board, &Board::setTimerSignal);
     connect(&m_parser, &Parser::foodAppeared, m_board, &Board::setFood);
     connect(&m_parser, &Parser::snakesChanged, m_board, &Board::setSnakes);
     connect(&m_parser, &Parser::dimensionsChanged, m_board, &Board::setDimensions);

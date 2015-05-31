@@ -38,7 +38,6 @@ public slots:
 signals:
     void directionChanged(const std::pair<int, Direction> &t_direction) const;
     void snakesChanged(const std::map<int, Snake> &t_snakes) const;
-    void timerSignalChanged() const;
     void restartSignal() const;
     void dimensionsChanged(const QPair<int, int> &t_dimensions) const;
     void idChanged(int t_id) const;

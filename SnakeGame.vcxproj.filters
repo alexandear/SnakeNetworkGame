@@ -137,7 +137,10 @@
     <ClCompile Include="GeneratedFiles\Release\moc_serversocketadapter.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="connectionwidget.cpp">
+    <ClCompile Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\widgets\connectionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\widgets\settingswidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_connectionwidget.cpp">
@@ -146,13 +149,16 @@
     <ClCompile Include="GeneratedFiles\Release\moc_connectionwidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="settingswidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_settingswidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_settingswidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_game.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_game.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
@@ -193,10 +199,13 @@
     <CustomBuild Include="server\serversocketadapter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="connectionwidget.h">
+    <CustomBuild Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\widgets\connectionwidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="settingswidget.h">
+    <CustomBuild Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\widgets\settingswidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Cloud%40mail.ru\Clarity-AG\SnakeNetworkGame\common\game.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

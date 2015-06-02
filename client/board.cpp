@@ -21,6 +21,8 @@ void Board::paintEvent(QPaintEvent *t_event)
 
     QPainter painter(this);
 
+    painter.setRenderHint(QPainter::Antialiasing);
+
     if (m_gameOver) {
         drawWon(painter);
         return;
@@ -29,20 +31,18 @@ void Board::paintEvent(QPaintEvent *t_event)
     if (m_flush)
         flush(painter);
 
-    for (auto const &client : m_snakes) {
+    for (auto const &snake : m_snakes) {
         auto bodyColor = BODY_COLOR;
         auto headColor = HEAD_COLOR;
-        if (client.second.id() != m_id) {
+        if (snake.second.id() != m_id) {
             bodyColor.setAlpha(ALPHA);
             headColor.setAlpha(ALPHA);
         }
-        drawSnake(painter, bodyColor, headColor, client.second);
+        drawSnake(painter, bodyColor, headColor, snake.second);
     }
 
-    for (auto const &point : m_food) {
-        drawSquare(painter, FOOD_COLOR, point.x() * squareWidth(), point.y() * squareHeight());
-    }
-
+    for (auto const &food : m_food)
+        drawSquare(painter, FOOD_COLOR, food.x() * squareWidth(), food.y() * squareHeight());
 
 }
 
@@ -89,9 +89,7 @@ void Board::drawWon(QPainter &t_painter)
 
 void Board::keyPressEvent(QKeyEvent *t_event)
 {
-    qDebug() << "keyPressEvent";
-    if (!m_timerSignal)
-        return;
+    qDebug() << "Board::keyPressEvent" << t_event->key();
 
     switch (t_event->key()) {
     case Qt::Key_A:
@@ -118,7 +116,6 @@ void Board::keyPressEvent(QKeyEvent *t_event)
     default:
         QFrame::keyPressEvent(t_event);
     }
-    m_timerSignal = false;
     emit directionChanged(m_direction);
 }
 
@@ -134,7 +131,6 @@ void Board::setSnakes(const std::map<int, Snake> &t_snakes)
 void Board::setTimerSignal()
 {
     qDebug() << "Board::setTimerSignal";
-    m_timerSignal = true;
     update();
 }
 

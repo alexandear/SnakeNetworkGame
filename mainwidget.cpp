@@ -5,8 +5,9 @@
 #include "client/board.h"
 #include "client/clientgame.h"
 #include "server/servergame.h"
-#include "connectionwidget.h"
-#include "settingswidget.h"
+#include "widgets/connectionwidget.h"
+#include "widgets/settingswidget.h"
+#include "common/game.h"
 
 
 MainWidget::MainWidget(QWidget *t_parent)
@@ -36,19 +37,25 @@ void MainWidget::initServer()
 
     setupServerUi();
 
-    connect(m_settingsWidget, &SettingsWidget::widthChanged, m_server, &ServerGame::setWidth);
-    connect(m_settingsWidget, &SettingsWidget::heightChanged, m_server, &ServerGame::setHeight);
-    connect(m_settingsWidget, &SettingsWidget::speedChanged, m_server, &ServerGame::setSpeed);
-    connect(m_settingsWidget, &SettingsWidget::penaltyChanged, m_server, &ServerGame::setPenalty);
-    connect(m_settingsWidget, &SettingsWidget::winScoreChanged, m_server, &ServerGame::setWinScore);
+    connect(m_settingsWidget, &SettingsWidget::widthChanged, 
+        static_cast<ServerGame*>(m_server), &ServerGame::setWidth);
+    connect(m_settingsWidget, &SettingsWidget::heightChanged, 
+        static_cast<ServerGame*>(m_server), &ServerGame::setHeight);
+    connect(m_settingsWidget, &SettingsWidget::speedChanged, 
+        static_cast<ServerGame*>(m_server), &ServerGame::setSpeed);
+    connect(m_settingsWidget, &SettingsWidget::penaltyChanged, 
+        static_cast<ServerGame*>(m_server), &ServerGame::setPenalty);
+    connect(m_settingsWidget, &SettingsWidget::winScoreChanged, 
+        static_cast<ServerGame*>(m_server), &ServerGame::setWinScore);
 
-    connect(m_server, &ServerGame::allClientsConnected, this, &MainWidget::clientConnected);
-    connect(m_server, &ServerGame::allClientsNotConnected, [&](){ 
+    connect(static_cast<ServerGame*>(m_server), &ServerGame::allClientsConnected,
+        this, &MainWidget::clientConnected);
+    connect(static_cast<ServerGame*>(m_server), &ServerGame::allClientsNotConnected, [&](){ 
         m_statusBar->showMessage(tr("Coudn't start game. Not all clients already connected.")); 
     });
-    connect(m_server, &ServerGame::gameStarted, this, &MainWidget::onGameStarted);
+    connect(static_cast<ServerGame*>(m_server), &ServerGame::gameStarted, this, &MainWidget::onGameStarted);
 
-    createClient("127.0.0.1", m_server->port());
+    createClient("127.0.0.1", static_cast<ServerGame*>(m_server)->port());
 }
 
 
@@ -58,7 +65,7 @@ void MainWidget::setupServerUi()
     m_rightPanelLayout->addWidget(m_settingsWidget);
 
     m_rightPanelLayout->addWidget(m_playButton);
-    connect(m_playButton, &QPushButton::clicked, m_server, &ServerGame::start);
+    connect(m_playButton, &QPushButton::clicked, m_server, &Game::start);
 
     setWindowTitle(windowTitle() + tr(" - Server"));
 }
@@ -130,17 +137,19 @@ void MainWidget::displayServerConnectionError(const QString &t_message)
 void MainWidget::createClient(const QString &t_address, quint16 t_port)
 {
     m_client = new ClientGame(m_board, t_address, t_port);
-    connect(m_client, &ClientGame::connectionError, 
+    connect(static_cast<ClientGame*>(m_client), &ClientGame::connectionError, 
         this, &MainWidget::displayClientConnectionError);
-    connect(m_client, &ClientGame::scoresChanged, this, &MainWidget::updateScores);
+    connect(static_cast<ClientGame*>(m_client), &ClientGame::scoresChanged, this, &MainWidget::updateScores);
 }
 
 
 void MainWidget::onConnectClicked(const QString &t_address, quint16 t_port)
 {
     createClient(t_address, t_port);
-    connect(m_client, &ClientGame::connected, this, &MainWidget::connectedToServer);
-    connect(m_client, &ClientGame::connected, m_connectionWidget, &ConnectionWidget::onConnectEstablished);
+    connect(static_cast<ClientGame*>(m_client), &ClientGame::connected, 
+        this, &MainWidget::connectedToServer);
+    connect(static_cast<ClientGame*>(m_client), &ClientGame::connected,
+        m_connectionWidget, &ConnectionWidget::onConnectEstablished);
 }
 
 
@@ -158,9 +167,10 @@ void MainWidget::clientConnected()
 
 void MainWidget::onGameStarted()
 {
+    qDebug() << "MainWidget::onGameStarted";
     m_playButton->setText(tr("Restart"));
-    disconnect(m_playButton, &QPushButton::clicked, m_server, &ServerGame::start);
-    connect(m_playButton, &QPushButton::clicked, m_server, &ServerGame::restart);
+    m_playButton->disconnect();
+    connect(m_playButton, &QPushButton::clicked, m_server, &Game::restart);
     m_board->setFocus();
 }
 

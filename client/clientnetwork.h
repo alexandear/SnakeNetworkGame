@@ -10,8 +10,7 @@ class ClientNetwork : public QObject
     Q_OBJECT
 
 public:
-    explicit ClientNetwork(const QHostAddress &t_address, quint16 t_port,
-        QObject *t_parent = nullptr);
+    explicit ClientNetwork(const QHostAddress &t_address, quint16 t_port);
 
 signals:
     void received(const QString &t_message) const;
